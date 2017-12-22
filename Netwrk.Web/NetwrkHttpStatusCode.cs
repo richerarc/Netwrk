@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace Netwrk.WebSockets
+namespace Netwrk.Web
 {
     public class NetwrkHttpStatusCode
     {

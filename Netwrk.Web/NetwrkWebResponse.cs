@@ -2,7 +2,7 @@ using System;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Netwrk.WebSockets
+namespace Netwrk.Web
 {
     public class NetwrkWebResponse : NetwrkWebMessage
     {

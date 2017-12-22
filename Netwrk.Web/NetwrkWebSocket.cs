@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 
-namespace Netwrk.WebSockets
+namespace Netwrk.Web
 {
     public class NetwrkWebSocket
     {
@@ -104,6 +104,7 @@ namespace Netwrk.WebSockets
                 }
 
                 InitializeConnected(client, webClient.Stream);
+                Start();
 
                 return true;
             }
@@ -258,7 +259,7 @@ namespace Netwrk.WebSockets
 
             if (packet.Masked)
             {
-                packet.MaskingKey = await ReadIntAsync();
+                packet.MaskingKey = IPAddress.NetworkToHostOrder(await ReadIntAsync());
             }
 
             await ReadBytesAsync(packet.PayloadData, (int)length);
