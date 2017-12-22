@@ -20,13 +20,13 @@ namespace Netwrk.Tests.Web
             Assert.IsNull(webListener.Certificate, null, "Certificate should be null after the instanciation");
             Assert.IsFalse(webListener.Listening, "Listening should be false after instanciation");
 
-            webListener.Start();
+            bool started = webListener.Start();
 
             Assert.AreNotEqual(webListener.Port, 0, "Port should not be 0");
 
             Assert.IsTrue(webListener.Listening, "Listening should be false after the call to Start");
 
-            return true;
+            return started;
         }
 
         private bool TryConnectWebSocket(string uri, out NetwrkWebSocket webSocket)
@@ -39,7 +39,7 @@ namespace Netwrk.Tests.Web
 
             return webSocket.Connected;
         }
-
+        
         [TestMethod]
         public void Connect()
         {
