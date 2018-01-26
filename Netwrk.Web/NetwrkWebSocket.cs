@@ -304,27 +304,40 @@ namespace Netwrk.Web
         //TODO: Implement fragmentationg (add async for this)
         private void Send(WebSocketPacket packet)
         {
+            byte[] crlf = new byte[4];
+            crlf[0] = 0x0D;
+            crlf[1] = 0x0A;
+            crlf[2] = 0x0D;
+            crlf[3] = 0x0A;            
+            
             using (MemoryStream memoryStream = new MemoryStream())
             {
                 BinaryWriter writer = new BinaryWriter(memoryStream);
 
                 writer.Write((byte)(0b1000_0000 | (byte)packet.OpCode));
+                
+                writer.Write(crlf);
 
                 byte masked = (byte)(packet.Masked ? 0b1000_0000 : 0);
 
                 if (packet.PayloadLength > short.MaxValue)
                 {
                     writer.Write((byte)(masked | 127));
+                    writer.Write(crlf);
                     writer.Write(IPAddress.HostToNetworkOrder((long)packet.PayloadLength));
+                    writer.Write(crlf);
                 }
                 else if (packet.PayloadLength > 125)
                 {
                     writer.Write((byte)(masked | 126));
+                    writer.Write(crlf);
                     writer.Write(IPAddress.HostToNetworkOrder((short)packet.PayloadLength));
+                    writer.Write(crlf);
                 }
                 else
                 {
                     writer.Write((byte)(masked | (byte)packet.PayloadLength));
+                    writer.Write(crlf);
                 }
 
                 if (packet.PayloadLength > 0)
@@ -334,11 +347,13 @@ namespace Netwrk.Web
                     if (packet.MaskingKey != 0)
                     {
                         writer.Write(IPAddress.HostToNetworkOrder(packet.MaskingKey));
+                        writer.Write(crlf);
 
                         data = Mask(packet.PayloadData, packet.MaskingKey);
                     }
 
                     memoryStream.Write(data, 0, data.Length);
+                    writer.Write(crlf);
                 }
 
                 stream.Write(memoryStream.ToArray(), 0, (int)memoryStream.Length);

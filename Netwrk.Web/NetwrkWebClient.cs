@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
@@ -85,7 +86,11 @@ namespace Netwrk.Web
 
         public async Task SendAsync(NetwrkWebMessage message)
         {
-            await writer.WriteLineAsync(message.ToString());
+            var mess = message.ToString();
+            mess = mess.Replace("\n", "\r\n");
+            mess = string.Concat(mess, "\r\n");
+            
+            await writer.WriteLineAsync(mess);
 
             if (message.Data != null && message.Data.Length > 0)
             {
